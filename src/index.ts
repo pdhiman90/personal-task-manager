@@ -7,7 +7,8 @@ import dotenv from 'dotenv';
 import { Server } from 'socket.io';
 dotenv.config();
 
-const port = process.env.PORT;;
+const port = process.env.PORT;
+console.log(process.env.ORIGIN,"cors origin")
 const app = express();
 app.use(cors({
     origin: process.env.ORIGIN, // Frontend origin
