@@ -3,6 +3,7 @@ import { HTTPStatusCodes } from "@bizcuit/httpstatuscodes";
 import { Request, Response } from "express";
 import AuthService from "../services/auth.services";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 const authUser = new AuthService();
 const signup = async (req:Request, res:Response): Promise<any> => {
@@ -46,6 +47,10 @@ const login = async (req:Request, res:Response): Promise<any> => {
     const user:any = await authUser.findUser(payload);
     if(!user){
         return res.status(HTTPStatusCodes.BAD_REQUEST).json({message:"User not found"});
+    }
+     const decryptedPassword = await bcrypt.compare(payload.password,user.password);
+    if(!decryptedPassword){
+        return res.status(HTTPStatusCodes.BAD_REQUEST).json({message:"Invalid password"});
     }
     const token = jwt.sign({id:user._id,username:user.username,email:payload.email},"secretkey",{
         expiresIn:"10d"
