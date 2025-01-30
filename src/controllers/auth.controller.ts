@@ -15,6 +15,10 @@ const signup = async (req:Request, res:Response): Promise<any> => {
         email,
         password
     }
+    const existingUser = await authUser.findUser(payload);
+    if(existingUser){
+        return res.status(HTTPStatusCodes.BAD_REQUEST).json({message:"User already exists"});
+    }
     const response = await authUser.registerUser(payload);
     const token = jwt.sign({username:payload.username,email:payload.email},"secretkey",{
         expiresIn:"10d"
